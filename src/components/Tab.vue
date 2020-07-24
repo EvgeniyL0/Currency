@@ -1,5 +1,5 @@
 <template>
-  <form class="results">
+  <div class="results">
     <input type="text" class="results__input" v-model="factor" />
     <span>{{ currency }}</span>
     <div class="results__cards-container">
@@ -54,7 +54,7 @@
         </svg>
       </button>
     </div>
-  </form>
+  </div>
 </template>
 
 <script>
@@ -181,6 +181,7 @@ export default {
   box-shadow: 0px 3px 6px rgba(157, 157, 157, 0.16);
   border-radius: 12px;
   text-align: start;
+  overflow: hidden;
 }
 
 .card__title {
