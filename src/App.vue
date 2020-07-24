@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <toolbar v-bind:currency="current" v-bind:tabs="currencies" v-on:changeActiveTab="getRate"></toolbar>
-    <tab v-bind:currency="current" v-bind:rate="rate"></tab>
+    <p class="error-text" v-if="serverError">{{ serverErrorText }}</p>
+    <tab v-bind:currency="current" v-bind:rates="Object.entries(rates)"></tab>
   </div>
 </template>
 
@@ -13,58 +14,72 @@ export default {
   name: "App",
   components: {
     Tab,
-    Toolbar
+    Toolbar,
   },
   data() {
     return {
       currencies: [],
       current: "",
-      rate: {},
-      serverError: ""
+      rates: {},
+      serverError: false,
+      serverErrorText: "",
     };
   },
   methods: {
     getRate(base) {
+      this.serverError = false;
+      this.serverErrorText = "";
       this.current = base;
       fetch(`https://api.openrates.io/latest?base=${base}`)
-        .then(res => {
+        .then((res) => {
           if (res.ok) {
             return res.json();
           }
-          return Promise.reject(`${res.status} ${res.statusText}`);
+          return Promise.reject(`${res.statusText}`);
         })
-        .then(data => {
-          this.rate = data.rates;
+        .then((data) => {
+          this.rates = data.rates;
         })
-        .catch(err => {
-          this.serverError = err;
+        .catch((err) => {
+          this.serverError = true;
+          this.serverErrorText = err;
         });
-    }
+    },
   },
   created() {
     fetch("https://api.openrates.io/latest")
-      .then(res => {
+      .then((res) => {
         if (res.ok) {
           return res.json();
         }
-        return Promise.reject(`${res.status} ${res.statusText}`);
+        return Promise.reject(`${res.statusText}`);
       })
-      .then(data => {
+      .then((data) => {
         this.currencies = Object.keys(data.rates);
         this.currencies.unshift(data.base);
         this.current = data.base;
-        this.rate = data.rates;
+        this.rates = data.rates;
       })
-      .catch(err => {
-        this.serverError = err;
+      .catch((err) => {
+        this.serverError = true;
+        this.serverErrorText = err;
       });
-  }
+  },
 };
 </script>
 
 <style>
 #app {
-  width: 720px;
-  margin: auto;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.error-text {
+  font-family: "Roboto", sans-serif;
+  font-size: 21px;
+  line-height: 25px;
+  color: #787878;
+  text-align: center;
 }
 </style>

@@ -1,13 +1,25 @@
 <template>
   <div class="toolbar">
-    <p class="toolbar__title">Курс {{ currency }} на сегодня</p>
+    <p class="toolbar__title">Курс {{ currency }} сегодня</p>
     <button
       type="button"
-      class="toolbar__button toolbar__button_slide toolbar__button_slide_right"
-      v-on:click="leftShift = leftShift + 90"
-      v-bind:disabled="leftShift == 45"
-    >R</button>
-    <div class="toolbar__tabs" v-bind:style="{ left: leftShift + 'px' }">
+      class="toolbar__button toolbar__button_slide toolbar__button_slide_back"
+      v-on:click="shift += shiftStep"
+      v-bind:disabled="shift == 45"
+    >
+      <svg
+        width="8"
+        height="12"
+        viewBox="0 0 8 12"
+        fill="#CCAE68"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M7.40991 10.58L2.82991 6L7.40991 1.41L5.99991 0L-8.7738e-05 6L5.99991 12L7.40991 10.58Z"
+        />
+      </svg>
+    </button>
+    <div class="toolbar__tabs" v-bind:style="{ left: shift + 'px' }">
       <button
         type="button"
         class="toolbar__button toolbar__button_tab"
@@ -19,10 +31,22 @@
     </div>
     <button
       type="button"
-      class="toolbar__button toolbar__button_slide toolbar__button_slide_left"
-      v-on:click="leftShift = leftShift - 90"
-      v-bind:disabled="leftShift == maxLeftShift"
-    >L</button>
+      class="toolbar__button toolbar__button_slide toolbar__button_slide_forward"
+      v-on:click="shift -= shiftStep"
+      v-bind:disabled="shift == maxshift"
+    >
+      <svg
+        width="8"
+        height="12"
+        viewBox="0 0 8 12"
+        fill="#CCAE68"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M0.590088 10.58L5.17009 6L0.590088 1.41L2.00009 0L8.00009 6L2.00009 12L0.590088 10.58Z"
+        />
+      </svg>
+    </button>
   </div>
 </template>
 
@@ -31,20 +55,24 @@ export default {
   props: ["currency", "tabs"],
   data() {
     return {
-      leftShift: 45
+      shift: 45,
+      startShift: 45,
+      shiftStep: 90,
     };
   },
   computed: {
-    maxLeftShift() {
+    maxshift() {
       if (document.documentElement.clientWidth < 720) {
         return (
-          document.documentElement.clientWidth - 45 - this.tabs.length * 90
+          document.documentElement.clientWidth -
+          this.startShift -
+          this.tabs.length * this.shiftStep
         );
       } else {
-        return 675 - this.tabs.length * 90;
+        return 720 - this.startShift - this.tabs.length * this.shiftStep;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -56,13 +84,15 @@ export default {
   padding-top: 30px;
   background-color: #ffe782;
   overflow: hidden;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .toolbar__title {
   margin-left: 24px;
   margin-top: 0;
   margin-bottom: 8px;
+  font-size: 21px;
+  line-height: 25px;
 }
 
 .toolbar__tabs {
@@ -78,9 +108,12 @@ export default {
   height: 48px;
   cursor: pointer;
   background-color: #ffe782;
-  color: black;
+  color: #ccae68;
   border: none;
-  font-family: 'Roboto', sans-serif;
+  outline: none;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  line-height: 16px;
 }
 
 .toolbar__button_tab {
@@ -92,6 +125,7 @@ export default {
 
 .toolbar__button_tab_active {
   background-color: white;
+  color: black;
 }
 
 .toolbar__button_slide {
@@ -101,13 +135,15 @@ export default {
   z-index: 1;
 }
 
-.toolbar__button_slide_left {
-  right: 0;
-  background-image: url();
+.toolbar__button_slide:disabled > svg {
+  fill: #ffe782;
 }
 
-.toolbar__button_slide_right {
+.toolbar__button_slide_forward {
+  right: 0;
+}
+
+.toolbar__button_slide_back {
   left: 0;
-  background-image: url();
 }
 </style>
