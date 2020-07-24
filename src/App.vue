@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <toolbar v-bind:currency="current" v-bind:tabs="currencies" v-on:changeActiveTab="getRate"></toolbar>
+    <toolbar v-bind:currency="current" v-bind:tabs="currencies" v-bind:block="waitingForResponse" v-on:changeActiveTab="getRate"></toolbar>
     <p class="error-text" v-if="serverError">{{ serverErrorText }}</p>
     <tab v-bind:currency="current" v-bind:rates="Object.entries(rates)"></tab>
   </div>
@@ -23,12 +23,14 @@ export default {
       rates: {},
       serverError: false,
       serverErrorText: "",
+      waitingForResponse: false
     };
   },
   methods: {
     getRate(base) {
       this.serverError = false;
       this.serverErrorText = "";
+      this.waitingForResponse = true;
       this.current = base;
       fetch(`https://api.openrates.io/latest?base=${base}`)
         .then((res) => {
@@ -39,10 +41,12 @@ export default {
         })
         .then((data) => {
           this.rates = data.rates;
+          this.waitingForResponse = false;
         })
         .catch((err) => {
           this.serverError = true;
           this.serverErrorText = err;
+          this.waitingForResponse = false;
         });
     },
   },

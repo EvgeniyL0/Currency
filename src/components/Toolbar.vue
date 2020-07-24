@@ -27,6 +27,7 @@
         v-for="item in tabs"
         v-bind:key="item"
         v-on:click="$emit('changeActiveTab', item)"
+        v-bind:disabled="block"
       >{{ item }}</button>
     </div>
     <button
@@ -52,7 +53,7 @@
 
 <script>
 export default {
-  props: ["currency", "tabs"],
+  props: ["currency", "tabs", "block"],
   data() {
     return {
       shift: 45,
