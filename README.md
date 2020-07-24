@@ -2,7 +2,7 @@
 
 ## Развернуть локально:  
 1. Скопируйте репозиторий, выполнив в термиале команду:  
-`$ git clone https://github.com/EvgeniyL0/User-profile.git`.  
+`$ git clone https://github.com/EvgeniyL0/Currency.git`.  
   
 2. Установите необходимые пакеты: `$ npm install`.  
   
