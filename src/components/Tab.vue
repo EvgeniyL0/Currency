@@ -38,7 +38,7 @@
         class="results__button results__button_forward"
         type="button"
         v-on:click="goForward"
-        v-bind:disabled="endIndex >= rates.length"
+        v-bind:disabled="endIndex >= cards.length"
       >
         далее
         <svg
@@ -59,7 +59,7 @@
 
 <script>
 export default {
-  props: ["currency", "rates"],
+  props: ["currency", "cards"],
   data() {
     return {
       factor: 1,
@@ -70,7 +70,7 @@ export default {
   },
   computed: {
     range() {
-      return this.rates.slice(this.startIndex, this.endIndex);
+      return this.cards.slice(this.startIndex, this.endIndex);
     },
   },
   watch: {

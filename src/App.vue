@@ -1,8 +1,13 @@
 <template>
   <div id="app">
-    <toolbar v-bind:currency="current" v-bind:tabs="currencies" v-bind:block="waitingForResponse" v-on:changeActiveTab="getRate"></toolbar>
+    <toolbar
+      v-bind:currency="current"
+      v-bind:tabs="currencies"
+      v-bind:block="waitingForResponse"
+      v-on:changeActiveTab="getCurrencyRate"
+    ></toolbar>
     <p class="error-text" v-if="serverError">{{ serverErrorText }}</p>
-    <tab v-bind:currency="current" v-bind:rates="Object.entries(rates)"></tab>
+    <tab v-bind:currency="current" v-bind:cards="Object.entries(rate)"></tab>
   </div>
 </template>
 
@@ -20,49 +25,43 @@ export default {
     return {
       currencies: [],
       current: "",
-      rates: {},
+      rate: {},
       serverError: false,
       serverErrorText: "",
-      waitingForResponse: false
+      waitingForResponse: false,
     };
   },
   methods: {
-    getRate(base) {
-      this.serverError = false;
-      this.serverErrorText = "";
-      this.waitingForResponse = true;
+    getCurrencyRate(base) {
       this.current = base;
-      fetch(`https://api.openrates.io/latest?base=${base}`)
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          }
-          return Promise.reject(`${res.statusText}`);
-        })
-        .then((data) => {
-          this.rates = data.rates;
-          this.waitingForResponse = false;
-        })
-        .catch((err) => {
-          this.serverError = true;
-          this.serverErrorText = err;
-          this.waitingForResponse = false;
-        });
+      if (this.$store.getters.getRate(base) === undefined) {
+        this.serverError = false;
+        this.serverErrorText = "";
+        this.waitingForResponse = true;
+        this.$store
+          .dispatch("requestRate", base)
+          .then((data) => {
+            this.rate = data.rates;
+            this.waitingForResponse = false;
+          })
+          .catch((err) => {
+            this.serverError = true;
+            this.serverErrorText = err;
+            this.waitingForResponse = false;
+          });
+      } else {
+        this.rate = this.$store.getters.getRate(base).rates;
+      }
     },
   },
   created() {
-    fetch("https://api.openrates.io/latest")
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        return Promise.reject(`${res.statusText}`);
-      })
+    this.$store
+      .dispatch("requestRate", "EUR")
       .then((data) => {
         this.currencies = Object.keys(data.rates);
         this.currencies.unshift(data.base);
         this.current = data.base;
-        this.rates = data.rates;
+        this.rate = data.rates;
       })
       .catch((err) => {
         this.serverError = true;
