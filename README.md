@@ -1,4 +1,4 @@
-## Виджет [Курс валют](https://evgeniyl0.github.io/currency/)  
+## Виджет [Курс валют](https://evgeniyl0.github.io/Currency/)  
 **VUE, VUEX**  
 
 ## Развернуть локально:  
