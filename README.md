@@ -1,4 +1,4 @@
-## Виджет [Курс валют](https://evgeniyl0.github.io/Currency/)  
+## Виджет [Курс валют](https://evgeniyl0.github.io/currency/)  
 Реализован с использованием фреймворка Vue.js. Данные о курсах валют берутся с открытого [API](http://openrates.io) и записываются в хранилище Vuex.  
 
 ## Развернуть локально:  
