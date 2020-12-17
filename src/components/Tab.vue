@@ -65,13 +65,13 @@ export default {
       factor: 1,
       startIndex: 0,
       endIndex: 4,
-      numberOfCards: 4,
+      numberOfCards: 4
     };
   },
   computed: {
     range() {
       return this.cards.slice(this.startIndex, this.endIndex);
-    },
+    }
   },
   watch: {
     currency: function() {
@@ -87,8 +87,8 @@ export default {
     goBack() {
       this.startIndex -= this.numberOfCards;
       this.endIndex -= this.numberOfCards;
-    },
-  },
+    }
+  }
 };
 </script>
 

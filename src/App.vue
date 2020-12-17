@@ -19,7 +19,7 @@ export default {
   name: "App",
   components: {
     Tab,
-    Toolbar,
+    Toolbar
   },
   data() {
     return {
@@ -28,46 +28,48 @@ export default {
       rate: {},
       serverError: false,
       serverErrorText: "",
-      waitingForResponse: false,
+      waitingForResponse: false
     };
   },
   methods: {
     getCurrencyRate(base) {
+      const newRate = this.$store.getters.getRate(base);
+
       this.current = base;
-      if (this.$store.getters.getRate(base) === undefined) {
+      if (newRate === undefined) {
         this.serverError = false;
         this.serverErrorText = "";
         this.waitingForResponse = true;
         this.$store
           .dispatch("requestRate", base)
-          .then((data) => {
+          .then(data => {
             this.rate = data.rates;
             this.waitingForResponse = false;
           })
-          .catch((err) => {
+          .catch(err => {
             this.serverError = true;
             this.serverErrorText = err;
             this.waitingForResponse = false;
           });
       } else {
-        this.rate = this.$store.getters.getRate(base).rates;
+        Object.assign(this.rate, newRate.rates);
       }
-    },
+    }
   },
-  created() {
-    this.$store
+  async created() {
+    await this.$store
       .dispatch("requestRate", "EUR")
-      .then((data) => {
+      .then(data => {
         this.currencies = Object.keys(data.rates);
         this.currencies.unshift(data.base);
         this.current = data.base;
         this.rate = data.rates;
       })
-      .catch((err) => {
+      .catch(err => {
         this.serverError = true;
         this.serverErrorText = err;
       });
-  },
+  }
 };
 </script>
 

@@ -34,7 +34,7 @@
       type="button"
       class="toolbar__button toolbar__button_slide toolbar__button_slide_forward"
       v-on:click="shift -= shiftStep"
-      v-bind:disabled="shift == maxshift"
+      v-bind:disabled="Math.abs(shift) >= maxshift"
     >
       <svg
         width="8"
@@ -59,21 +59,21 @@ export default {
       shift: 45,
       startShift: 45,
       shiftStep: 90,
+      maxWidth: 720
     };
   },
   computed: {
     maxshift() {
-      if (document.documentElement.clientWidth < 720) {
+      if (document.documentElement.clientWidth < this.maxWidth) {
         return (
-          document.documentElement.clientWidth -
-          this.startShift -
-          this.tabs.length * this.shiftStep
+          this.tabs.length * this.shiftStep -
+          document.documentElement.clientWidth
         );
       } else {
-        return 720 - this.startShift - this.tabs.length * this.shiftStep;
+        return this.tabs.length * this.shiftStep - this.maxWidth;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
